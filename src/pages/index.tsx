@@ -1,39 +1,41 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-import {
-  Box,
-  Button,
-  Divider,
-  Heading,
-  HStack,
-  SimpleGrid,
-  Text,
-  useDisclosure,
-  VStack,
-} from "@chakra-ui/react";
+import { useDisclosure, VStack } from "@chakra-ui/react";
 
 import { api } from "./api/users";
 import { divida } from "./api/divida";
 import { uuid } from "./api/uuid";
 import Card from "../components/Card";
 import CardContent from "../components/CardContent";
-import Modal from "../components/Modal";
+import Modal, { UsersResponse } from "../components/Modal";
 import { useRouter } from "next/router";
 import Header from "../components/Header";
 
 const Home: React.FC = () => {
-  const [debts, setDebits] = useState();
+  const [debits, setDebits] = useState();
+  const [users, setUsers] = useState<UsersResponse[]>([]);
+  const [selectedUser, setSelectedUser] = useState("0");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
 
   useEffect(() => {
+    api.get("users").then((resp) => {
+      const getUser = resp.data.map((user: UsersResponse) => ({
+        id: user.id,
+        name: user.name,
+      }));
+      setUsers(getUser);
+    });
+  }, []);
+  console.log(users.map((u) => u.name));
+  
+  useEffect(() => {
     divida.get(`divida/${uuid}`).then((resp) => setDebits(resp.data.result));
   }, []);
 
-
   return (
     <VStack w="full" px="1rem">
-      <Header onOpen={onOpen} />
+      <Header onOpen={onOpen} whenThereIsUser={false} />
 
       <CardContent>
         <Card

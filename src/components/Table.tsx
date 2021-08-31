@@ -1,23 +1,12 @@
-import {
-  Button,
-  HStack,
-  Icon,
-  Table as ChakraTable,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-  TableProps,
-} from "@chakra-ui/react";
+import { Button, HStack, Icon, Td, Tr, TableProps } from "@chakra-ui/react";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
+
 import { IDebits } from "../pages/divida";
-import { ReactNode } from "react";
 
 interface ITable extends TableProps {
   debit: IDebits;
-  handleEditDebit?: (debit: IDebits) => void;
-  handleDeleteDebit?: (id: number) => {};
+  handleEditDebit: (debit: IDebits) => void;
+  handleDeleteDebit: (_id: number) => {};
 }
 
 const Table: React.FC<ITable> = ({
@@ -36,12 +25,11 @@ const Table: React.FC<ITable> = ({
       </Td>
       <Td>{debit.motivo}</Td>
       <Td>{new Date(debit.criado).toLocaleDateString("pt-BR")}</Td>
-      {/* <Td>{debit.criado}</Td> */}
       <Td>
         <HStack>
           <Button
             bgColor="blue.400"
-            // onClick={() => ''}
+            onClick={() => handleEditDebit(debit)}
             _hover={{
               opacity: "0.8",
             }}
@@ -50,7 +38,7 @@ const Table: React.FC<ITable> = ({
           </Button>
           <Button
             bgColor="red.400"
-            // onClick={() => ''}
+            onClick={() => handleDeleteDebit(debit._id)}
             _hover={{
               opacity: "0.8",
             }}
