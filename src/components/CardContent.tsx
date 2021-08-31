@@ -9,7 +9,7 @@ const CardContent: React.FC<CardContentProps> = ({ children }) => {
   return (
     <HStack
       w="full"
-      h="calc(100vh - 6.8rem)"
+      h={["calc(100vh - 10rem)", "calc(100vh - 10rem)", "calc(100vh - 6.8rem)"]}
       flexWrap="wrap"
       border="1px solid"
       borderColor="gray.200"

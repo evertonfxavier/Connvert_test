@@ -18,8 +18,11 @@ import { uuid } from "./api/uuid";
 import Card from "../components/Card";
 import CardContent from "../components/CardContent";
 import Modal from "../components/Modal";
+import { useRouter } from "next/router";
 
 const Home: React.FC = () => {
+  const router = useRouter();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [formData, setFormData] = useState({
@@ -114,7 +117,7 @@ const Home: React.FC = () => {
         <Card
           user="Everton Freitas Xavier da Silva"
           createdAt="30/08/2021"
-          handleClickCard={() => ""}
+          handleClickCard={() => router.push("/divida")}
         />
       </CardContent>
 
