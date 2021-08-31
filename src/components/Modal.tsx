@@ -10,20 +10,20 @@ import {
   Button,
   HStack,
   ModalFooter,
-  Select,
   Box,
   Input,
   InputGroup,
   InputLeftAddon,
 } from "@chakra-ui/react";
 import { api } from "../pages/api/users";
+import Select from "./Select";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: any;
 }
 
-interface UsersResponse {
+export interface UsersResponse {
   id: number;
   name: string;
 }
@@ -46,9 +46,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     const user = event.target.value;
     setSelectedUser(user);
   }
+  console.log(selectedUser);
 
   return (
-    <ChakraModal isOpen={isOpen} onClose={onClose}>
+    <ChakraModal isOpen={true} onClose={onClose}>
       <ModalOverlay />
       <ModalContent mt="8rem" pt="1.2rem">
         <ModalCloseButton />
@@ -60,7 +61,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           >
             <Box w="full">
               <label htmlFor="valor">Usuário:</label>
-              <Select
+              {/* <Select
                 name="user"
                 value={selectedUser}
                 onChange={handleSelectUser}
@@ -71,7 +72,13 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                     {user.name}
                   </option>
                 ))}
-              </Select>
+              </Select> */}
+              <Select
+                name="user"
+                options={users}
+                handleSelectUser={handleSelectUser}
+                value={selectedUser}
+              />
             </Box>
 
             <Box w="full">

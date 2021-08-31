@@ -1,6 +1,7 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import {
   Box,
+  Button,
   Heading,
   HStack,
   Icon,
@@ -14,7 +15,7 @@ import { uuid } from "./api/uuid";
 import CardContent from "../components/CardContent";
 import Table from "../components/Table";
 import { useRouter } from "next/router";
-import { ArrowBackIcon } from "@chakra-ui/icons";
+import { ArrowBackIcon, DeleteIcon } from "@chakra-ui/icons";
 
 const Home: React.FC = () => {
   const router = useRouter();
@@ -47,16 +48,27 @@ const Home: React.FC = () => {
           </Heading>
         </Box>
 
-        {/* <Button
-          bgColor="blue.400"
-          color="white"
-          _hover={{
-            opacity: "0.8",
-          }}
-          onClick={onOpen}
-        >
-          + Criar dívida
-        </Button> */}
+        <HStack>
+          <Button
+            bgColor="blue.400"
+            color="white"
+            _hover={{
+              opacity: "0.8",
+            }}
+            onClick={onOpen}
+          >
+            + Criar dívida
+          </Button>
+          <Button
+            bgColor="red.400"
+            // onClick={onOpen}
+            _hover={{
+              opacity: "0.8",
+            }}
+          >
+            <Icon as={DeleteIcon} color="white" />
+          </Button>
+        </HStack>
       </HStack>
 
       <CardContent>

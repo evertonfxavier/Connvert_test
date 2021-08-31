@@ -116,7 +116,7 @@ const Home: React.FC = () => {
       <CardContent>
         <Card
           user="Everton Freitas Xavier da Silva"
-          createdAt="30/08/2021"
+          idUsuario={1}
           handleClickCard={() => router.push("/divida")}
         />
       </CardContent>
