@@ -8,6 +8,7 @@ import {
   HStack,
   SimpleGrid,
   Text,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 
@@ -15,15 +16,11 @@ import { api } from "./api/users";
 import { divida } from "./api/divida";
 import { uuid } from "./api/uuid";
 import Card from "../components/Card";
-
-interface UsersResponse {
-  id: number;
-  name: string;
-}
+import CardContent from "../components/CardContent";
+import Modal from "../components/Modal";
 
 const Home: React.FC = () => {
-  const [users, setUsers] = useState<UsersResponse[]>([]);
-  const [selectedUser, setSelectedUser] = useState("0");
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [formData, setFormData] = useState({
     idUsuario: "",
@@ -32,25 +29,10 @@ const Home: React.FC = () => {
   });
 
   useEffect(() => {
-    api.get("users").then((resp) => {
-      const getUser = resp.data.map((user: UsersResponse) => ({
-        id: user.id,
-        name: user.name,
-      }));
-      setUsers(getUser);
-    });
-  }, []);
-
-  useEffect(() => {
     divida
       .get(`divida/${uuid}`)
       .then((resp) => console.log("divida", resp.data.result));
   }, []);
-
-  function handleSelectUser(event: ChangeEvent<HTMLSelectElement>) {
-    const user = event.target.value;
-    setSelectedUser(user);
-  }
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
@@ -62,7 +44,7 @@ const Home: React.FC = () => {
     event.preventDefault();
 
     const { idUsuario, motivo, valor } = formData;
-    const user = selectedUser;
+    // const user = selectedUser;
 
     const data = {
       //TODO por enquanto pegando apenas id estatico
@@ -103,14 +85,18 @@ const Home: React.FC = () => {
         w="full"
         h="4rem"
         px="1rem"
-        border="1px solid"
-        borderColor="gray.200"
+        mt="1rem"
         borderRadius=".4rem"
         justifyContent="space-between"
       >
-        <Heading as="h1" fontSize="sm">
-          Lista de Devedores
-        </Heading>
+        <VStack spacing={0} alignItems="flex-start">
+          <Text fontw={6} h={6} fontWeight="700" color="gray.800" m="0">
+            Olá!
+          </Text>
+          <Text fontWeight="500" color="gray.400" m="0">
+            Seja bem-vindo(a)! 😄
+          </Text>
+        </VStack>
 
         <Button
           bgColor="blue.400"
@@ -118,18 +104,21 @@ const Home: React.FC = () => {
           _hover={{
             opacity: "0.8",
           }}
+          onClick={onOpen}
         >
-          + Criar usuário
+          + Criar dívida
         </Button>
       </HStack>
 
-      <HStack w="full" flexWrap="wrap">
+      <CardContent>
         <Card
           user="Everton Freitas Xavier da Silva"
           createdAt="30/08/2021"
           handleClickCard={() => ""}
         />
-      </HStack>
+      </CardContent>
+
+      <Modal isOpen={isOpen} onClose={onClose} />
     </VStack>
   );
 };

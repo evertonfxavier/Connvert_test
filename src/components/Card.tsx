@@ -30,7 +30,7 @@ const Card: React.FC<CardProps> = ({ user, createdAt, handleClickCard }) => {
           Criado em: {createdAt}
         </Text>
         <Text color="green.400" fontSize="sm" fontStyle="italic">
-          Ver dívida {">>"}
+          Ver dívida(s) {">>"}
         </Text>
       </HStack>
     </Box>

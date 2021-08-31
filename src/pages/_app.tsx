@@ -34,7 +34,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           bgColor="gray.50"
           position="relative"
         >
-          <Header />
+          
           <Component {...pageProps} />
         </VStack>
       </Stack>
