@@ -25,11 +25,7 @@ const Home: React.FC = () => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [formData, setFormData] = useState({
-    idUsuario: "",
-    motivo: "",
-    valor: "",
-  });
+ 
 
   useEffect(() => {
     divida
@@ -37,28 +33,7 @@ const Home: React.FC = () => {
       .then((resp) => console.log("divida", resp.data.result));
   }, []);
 
-  function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
-    const { name, value } = event.target;
 
-    setFormData({ ...formData, [name]: value });
-  }
-
-  async function handleSubmit(event: FormEvent) {
-    event.preventDefault();
-
-    const { idUsuario, motivo, valor } = formData;
-    // const user = selectedUser;
-
-    const data = {
-      //TODO por enquanto pegando apenas id estatico
-      idUsuario: 3,
-      motivo,
-      valor,
-    };
-
-    await divida.post(`divida/${uuid}`, data);
-    console.log("data", data);
-  }
 
   return (
     <VStack w="full" px="1rem">

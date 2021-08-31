@@ -6,7 +6,7 @@ interface ISelect extends SelectProps {
   name: string;
   options: any;
   value?: string;
-  handleSelectUser?: ChangeEventHandler<HTMLSelectElement> | undefined;
+  handleSelectUser?: ChangeEventHandler;
 }
 
 const Select: React.FC<ISelect> = ({
@@ -23,7 +23,9 @@ const Select: React.FC<ISelect> = ({
       onChange={handleSelectUser}
       {...rest}
     >
-      <Text as="option" value="0">Selecione um usuário</Text>
+      <Text as="option" value="0">
+        Selecione um usuário
+      </Text>
       {options.map((user: UsersResponse) => (
         <Text as="option" key={user.id} value={user.id}>
           {user.id} - {user.name}

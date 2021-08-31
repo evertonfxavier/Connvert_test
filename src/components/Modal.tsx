@@ -1,5 +1,5 @@
 /* eslint-disable react/no-children-prop */
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import {
   Modal as ChakraModal,
   ModalOverlay,
@@ -17,6 +17,8 @@ import {
 } from "@chakra-ui/react";
 import { api } from "../pages/api/users";
 import Select from "./Select";
+import { divida } from "../pages/api/divida";
+import { uuid } from "../pages/api/uuid";
 
 interface ModalProps {
   isOpen: boolean;
@@ -31,6 +33,12 @@ export interface UsersResponse {
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const [users, setUsers] = useState<UsersResponse[]>([]);
   const [selectedUser, setSelectedUser] = useState("0");
+
+  const [formData, setFormData] = useState({
+    idUsuario: "",
+    motivo: "",
+    valor: "",
+  });
 
   useEffect(() => {
     api.get("users").then((resp) => {
@@ -48,39 +56,43 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   }
   console.log(selectedUser);
 
+  function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
+    const { name, value } = event.target;
+
+    setFormData({ ...formData, [name]: value });
+  }
+
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+
+    const { motivo, valor } = formData;
+
+    const data = {
+      idUsuario: selectedUser,
+      motivo,
+      valor,
+    };
+
+    await divida.post(`divida/${uuid}`, data);
+    console.log("data", data);
+  }
+
   return (
     <ChakraModal isOpen={true} onClose={onClose}>
       <ModalOverlay />
       <ModalContent mt="8rem" pt="1.2rem">
         <ModalCloseButton />
         <ModalBody py="2rem">
-          <VStack
-            as="form"
-            spacing={6}
-            // onSubmit={handleSubmit(handleSubmitData)}
-          >
+          <VStack as="form" spacing={6} onSubmit={handleSubmit}>
             <Box w="full">
               <label htmlFor="valor">Usuário:</label>
-              {/* <Select
-                name="user"
-                value={selectedUser}
-                onChange={handleSelectUser}
-              >
-                <option value="0">Selecione um usuário</option>
-                {users.map((user) => (
-                  <option key={user.id} value={user.name}>
-                    {user.name}
-                  </option>
-                ))}
-              </Select> */}
               <Select
-                name="user"
+                name="idUsuario"
                 options={users}
                 handleSelectUser={handleSelectUser}
                 value={selectedUser}
               />
             </Box>
-
             <Box w="full">
               <label htmlFor="valor">Valor:</label>
               <InputGroup>
@@ -88,17 +100,13 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                 <Input
                   type="number"
                   name="valor"
-                  //   onChange={handleInputChange}
+                  onChange={handleInputChange}
                 />
               </InputGroup>
             </Box>
             <Box w="full">
               <label htmlFor="motivo">Motivo:</label>
-              <Input
-                type="text"
-                name="motivo"
-                //   onChange={handleInputChange}
-              />
+              <Input type="text" name="motivo" onChange={handleInputChange} />
             </Box>
             <HStack>
               <Button
