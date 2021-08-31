@@ -19,74 +19,21 @@ import Card from "../components/Card";
 import CardContent from "../components/CardContent";
 import Modal from "../components/Modal";
 import { useRouter } from "next/router";
+import Header from "../components/Header";
 
 const Home: React.FC = () => {
+  const [debts, setDebits] = useState();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
- 
-
   useEffect(() => {
-    divida
-      .get(`divida/${uuid}`)
-      .then((resp) => console.log("divida", resp.data.result));
+    divida.get(`divida/${uuid}`).then((resp) => setDebits(resp.data.result));
   }, []);
-
 
 
   return (
     <VStack w="full" px="1rem">
-      {/* <form onSubmit={handleSubmit}>
-        <Select name="user" value={selectedUser} onChange={handleSelectUser}>
-          <option value="0">Selecione um usuário</option>
-          {users.map((user) => (
-            <option key={user.id} value={user.name}>
-              {user.name}
-            </option>
-          ))}
-        </Select>
-
-        <Box>
-          <label htmlFor="valor">Valor</label>
-          <Input type="number" name="valor" onChange={handleInputChange} />
-        </Box>
-        <Box>
-          <label htmlFor="motivo">Motivo</label>
-          <Input type="text" name="motivo" onChange={handleInputChange} />
-        </Box>
-
-        <Button type="submit">salvar</Button>
-      </form> */}
-
-      <HStack
-        w="full"
-        h="4rem"
-        px="1rem"
-        mt="1rem"
-        borderRadius=".4rem"
-        justifyContent="space-between"
-      >
-        <VStack spacing={0} alignItems="flex-start">
-          <Text fontw={6} h={6} fontWeight="700" color="gray.800" m="0">
-            Olá!
-          </Text>
-          <Text fontWeight="500" color="gray.400" m="0">
-            Seja bem-vindo(a)! 😄
-          </Text>
-        </VStack>
-
-        <Button
-          bgColor="blue.400"
-          color="white"
-          _hover={{
-            opacity: "0.8",
-          }}
-          onClick={onOpen}
-        >
-          + Criar dívida
-        </Button>
-      </HStack>
+      <Header onOpen={onOpen} />
 
       <CardContent>
         <Card

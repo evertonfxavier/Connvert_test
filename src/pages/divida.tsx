@@ -1,83 +1,40 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  Heading,
-  HStack,
-  Icon,
-  Text,
-  useDisclosure,
-  VStack,
-} from "@chakra-ui/react";
+import { VStack } from "@chakra-ui/react";
 
 import { divida } from "./api/divida";
 import { uuid } from "./api/uuid";
 import CardContent from "../components/CardContent";
 import Table from "../components/Table";
-import { useRouter } from "next/router";
-import { ArrowBackIcon, DeleteIcon } from "@chakra-ui/icons";
+import Header from "../components/Header";
+import TableContent from "../components/TableContent";
 
-const Home: React.FC = () => {
-  const router = useRouter();
+export interface IDebits {
+  _id: any;
+  idUsuario: number;
+  valor: number;
+  motivo: string;
+  criado: any;
+}
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+const Divida: React.FC = () => {
+  const [debts, setDebits] = useState<IDebits[]>([]);
 
   useEffect(() => {
-    divida
-      .get(`divida/${uuid}`)
-      .then((resp) => console.log("divida", resp.data.result));
+    divida.get(`divida/${uuid}`).then((resp) => setDebits(resp.data.result));
   }, []);
+  console.log(debts);
 
   return (
     <VStack w="full" px="1rem">
-      <HStack
-        w="full"
-        h="4rem"
-        // px="1rem"
-        mt="1rem"
-        borderRadius=".4rem"
-        justifyContent="space-between"
-      >
-        <Box>
-          <Box mb={2} cursor="pointer" onClick={() => router.back()}>
-            <Icon as={ArrowBackIcon} />
-            <Text as="span">voltar</Text>
-          </Box>
-          <Heading fontSize="xl" color="gray.800">
-            Everton Freitas Xavier da Silva
-          </Heading>
-        </Box>
+      <Header whenThereIsUser />
 
-        <HStack>
-          <Button
-            bgColor="blue.400"
-            color="white"
-            _hover={{
-              opacity: "0.8",
-            }}
-            onClick={onOpen}
-          >
-            + Criar dívida
-          </Button>
-          <Button
-            bgColor="red.400"
-            // onClick={onOpen}
-            _hover={{
-              opacity: "0.8",
-            }}
-          >
-            <Icon as={DeleteIcon} color="white" />
-          </Button>
-        </HStack>
-      </HStack>
-
-      <CardContent>
-        <Table />
-      </CardContent>
-
-      {/* <Modal isOpen={isOpen} onClose={onClose} /> */}
+      <TableContent>
+        {debts.map((debit) => (
+          <Table key={debit._id} debit={debit} />
+        ))}
+      </TableContent>
     </VStack>
   );
 };
 
-export default Home;
+export default Divida;

@@ -78,7 +78,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   }
 
   return (
-    <ChakraModal isOpen={true} onClose={onClose}>
+    <ChakraModal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent mt="8rem" pt="1.2rem">
         <ModalCloseButton />
