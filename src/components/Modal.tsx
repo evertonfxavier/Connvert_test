@@ -8,8 +8,9 @@ import {
   Input,
   InputGroup,
   InputLeftAddon,
+  Select,
 } from "@chakra-ui/react";
-import Select from "./Select";
+import { useForm } from "react-hook-form";
 import ModalWrapper from "./ModalWrapper";
 
 import { divida } from "../pages/api/divida";
@@ -19,6 +20,8 @@ import { uuid } from "../pages/api/uuid";
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSubmit?: any;
+  initialData: any;
 }
 
 export interface UsersResponse {
@@ -26,75 +29,78 @@ export interface UsersResponse {
   name: string;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
-  const [users, setUsers] = useState<UsersResponse[]>([]);
-  const [selectedUser, setSelectedUser] = useState("0");
+export interface SubmitProps {
+  idUsuario: string;
+  valor: string;
+  motivo: string;
+}
 
-  const [formData, setFormData] = useState({
-    idUsuario: "",
-    motivo: "",
-    valor: "",
-  });
+const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  initialData,
+}) => {
+  const [users, setUsers] = useState<UsersResponse[]>([]);
+
+  const { register, handleSubmit, reset } = useForm();
 
   useEffect(() => {
     api.get("users").then((resp) => {
-      const getUser = resp.data.map((user: UsersResponse) => ({
+      const usersData = resp.data.map((user: UsersResponse) => ({
         id: user.id,
         name: user.name,
       }));
-      setUsers(getUser);
+      // console.log("usersData", usersData);
+      setUsers(usersData);
     });
   }, []);
 
-  function handleSelectUser(event: ChangeEvent<HTMLSelectElement>) {
-    const user = event.target.value;
-    setSelectedUser(user);
-  }
-  console.log(selectedUser);
+  const handleClose = () => {
+    reset();
+    onClose();
+  };
 
-  function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
-    const { name, value } = event.target;
-
-    setFormData({ ...formData, [name]: value });
-  }
-
-  async function handleSubmit(event: FormEvent) {
-    event.preventDefault();
-
-    const { motivo, valor } = formData;
-
-    const data = {
-      idUsuario: selectedUser,
-      motivo,
-      valor,
-    };
-
-    await divida.post(`divida/${uuid}`, data);
-    console.log("data", data);
-  }
+  const handleSubmitData = (data: SubmitProps) => {
+    reset();
+    onSubmit(data);
+  };
 
   return (
-    <ModalWrapper isOpen={isOpen} onClose={onClose}>
-      <VStack as="form" spacing={6} onSubmit={handleSubmit}>
+    <ModalWrapper isOpen={isOpen} onClose={handleClose}>
+      <VStack as="form" spacing={6} onSubmit={handleSubmit(handleSubmitData)}>
         <Box w="full" textAlign="right">
           <label htmlFor="valor">Usuário:</label>
           <Select
-            name="idUsuario"
-            options={users}
-            handleSelectUser={handleSelectUser}
-            value={selectedUser}
-          />
+            placeholder="Selecione um usuário"
+            defaultValue={initialData?.idUsuario || ""}
+            {...register("idUsuario", { required: true })}
+          >
+            {users.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.id} - {user.name}
+              </option>
+            ))}
+          </Select>
         </Box>
         <Box w="full" textAlign="right">
           <label htmlFor="valor">Valor:</label>
           <InputGroup>
             <InputLeftAddon children="R$" />
-            <Input type="number" name="valor" onChange={handleInputChange} />
+            <Input
+              type="number"
+              defaultValue={initialData?.valor || ""}
+              {...register("valor", { required: true })}
+            />
           </InputGroup>
         </Box>
         <Box w="full" textAlign="right">
           <label htmlFor="motivo">Motivo:</label>
-          <Input type="text" name="motivo" onChange={handleInputChange} />
+          <Input
+            type="text"
+            defaultValue={initialData?.motivo || ""}
+            {...register("motivo", { required: true })}
+          />
         </Box>
         <HStack>
           <Button

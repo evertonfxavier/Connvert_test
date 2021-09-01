@@ -7,7 +7,7 @@ import TableContent from "../components/TableContent";
 
 import { divida } from "./api/divida";
 import { uuid } from "./api/uuid";
-import Modal from "../components/Modal";
+import Modal, { SubmitProps } from "../components/Modal";
 
 export interface IDebits {
   _id: number;
@@ -20,18 +20,29 @@ export interface IDebits {
 type IDebitsInput = Omit<IDebits, "id">;
 
 const Divida: React.FC = () => {
-  const [debts, setDebits] = useState<IDebits[]>([]);
-  const [editingUser, setEditingUser] = useState({});
+  const [debits, setDebits] = useState<IDebits[]>([]);
+  const [editingDebit, setEditingDebit] = useState<IDebitsInput | undefined>(
+    {} as IDebitsInput
+  );
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     divida.get(`divida/${uuid}`).then((resp) => setDebits(resp.data.result));
   }, []);
-  // console.log(debts);
+
+  const handleSubmit = async (data: SubmitProps) => {
+    if (editingDebit && editingDebit._id) {
+      await divida.put(`divida/${editingDebit._id}/${uuid}`, data);
+    } else {
+      await divida.post(`divida/${uuid}`, data);
+    }
+
+    divida.get(`divida/${uuid}`).then((resp) => setDebits(resp.data.result));
+  };
 
   const handleOpenModalToUpdateUser = async (data: IDebitsInput) => {
-    setEditingUser(data);
+    setEditingDebit(data);
 
     onOpen();
   };
@@ -39,7 +50,12 @@ const Divida: React.FC = () => {
   const handleDeleteDebit = async (_id: number) => {
     await divida.delete(`/divida/${_id}/${uuid}`);
 
-    setDebits(debts.filter((debit) => debit._id !== _id));
+    setDebits(debits.filter((debit) => debit._id !== _id));
+  };
+
+  const handleCloseModal = () => {
+    setEditingDebit(undefined);
+    onClose();
   };
 
   return (
@@ -47,7 +63,7 @@ const Divida: React.FC = () => {
       <Header onOpen={onOpen} whenThereIsUser />
 
       <TableContent>
-        {debts.map((debit) => (
+        {debits.map((debit) => (
           <Table
             key={debit._id}
             debit={debit}
@@ -57,7 +73,12 @@ const Divida: React.FC = () => {
         ))}
       </TableContent>
 
-      <Modal isOpen={isOpen} onClose={onClose} />
+      <Modal
+        isOpen={isOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleSubmit}
+        initialData={editingDebit}
+      />
     </VStack>
   );
 };

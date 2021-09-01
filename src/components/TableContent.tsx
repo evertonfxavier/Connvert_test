@@ -45,7 +45,7 @@ const TableContent: React.FC<CardContentProps> = ({ children }) => {
       }}
       placeContent="flex-start"
     >
-      <ChakraTable variant="striped" colorScheme="cyan">
+      <ChakraTable variant="striped" colorScheme="gray">
         <Thead>
           <Tr>
             {headerTable.map((header, idx) => (
