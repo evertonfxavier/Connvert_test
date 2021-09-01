@@ -1,4 +1,4 @@
-import { ArrowBackIcon, DeleteIcon } from "@chakra-ui/icons";
+import { useRouter } from "next/router";
 import {
   Box,
   Button,
@@ -8,15 +8,18 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import React from "react";
+import { ArrowBackIcon } from "@chakra-ui/icons";
 
 interface HeaderProps {
   whenThereIsUser: boolean;
   onOpen?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onOpen, whenThereIsUser, ...rest }) => {
+const Header: React.FC<HeaderProps> = ({
+  onOpen,
+  whenThereIsUser,
+  ...rest
+}) => {
   const router = useRouter();
 
   return !whenThereIsUser ? (
@@ -78,15 +81,6 @@ const Header: React.FC<HeaderProps> = ({ onOpen, whenThereIsUser, ...rest }) => 
           onClick={onOpen}
         >
           + Criar dívida
-        </Button>
-        <Button
-          bgColor="red.400"
-          // onClick={onOpen}
-          _hover={{
-            opacity: "0.8",
-          }}
-        >
-          <Icon as={DeleteIcon} color="white" />
         </Button>
       </HStack>
     </HStack>

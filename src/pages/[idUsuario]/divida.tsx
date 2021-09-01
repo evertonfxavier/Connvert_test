@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useDisclosure, VStack } from "@chakra-ui/react";
 
-import Table from "../components/Table";
-import Header from "../components/Header";
-import TableContent from "../components/TableContent";
+import Table from "../../components/Table";
+import Header from "../../components/Header";
+import TableContent from "../../components/TableContent";
 
-import { divida } from "./api/divida";
-import { uuid } from "./api/uuid";
-import Modal, { SubmitProps } from "../components/Modal";
+import { divida } from "../api/divida";
+import { uuid } from "../api/uuid";
+import Modal, { SubmitProps } from "../../components/Modal";
+import { useRouter } from "next/router";
 
 export interface IDebits {
   _id: number;
@@ -17,7 +18,7 @@ export interface IDebits {
   criado: string;
 }
 
-type IDebitsInput = Omit<IDebits, "id">;
+export type IDebitsInput = Omit<IDebits, "id">;
 
 const Divida: React.FC = () => {
   const [debits, setDebits] = useState<IDebits[]>([]);
@@ -27,8 +28,17 @@ const Divida: React.FC = () => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const { query } = useRouter();
+
+  const convertParamsTnumber = Number(query.idUsuario);
+
   useEffect(() => {
-    divida.get(`divida/${uuid}`).then((resp) => setDebits(resp.data.result));
+    divida.get(`divida/${uuid}`).then((resp) => {
+      let filtered = resp.data.result.filter(
+        (debit: IDebits) => debit.idUsuario === convertParamsTnumber
+      );
+      setDebits(filtered);
+    });
   }, []);
 
   const handleSubmit = async (data: SubmitProps) => {
@@ -38,7 +48,12 @@ const Divida: React.FC = () => {
       await divida.post(`divida/${uuid}`, data);
     }
 
-    divida.get(`divida/${uuid}`).then((resp) => setDebits(resp.data.result));
+    divida.get(`divida/${uuid}`).then((resp) => {
+      let filtered = resp.data.result.filter(
+        (debit: IDebits) => debit.idUsuario === convertParamsTnumber
+      );
+      setDebits(filtered);
+    });
   };
 
   const handleOpenModalToUpdateUser = async (data: IDebitsInput) => {

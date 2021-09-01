@@ -1,7 +1,7 @@
 import { Button, HStack, Icon, Td, Tr, TableProps } from "@chakra-ui/react";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 
-import { IDebits } from "../pages/divida";
+import { IDebits } from "../pages/[idUsuario]/divida";
 
 interface ITable extends TableProps {
   debit: IDebits;

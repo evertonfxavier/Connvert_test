@@ -2,7 +2,6 @@ import Head from "next/head";
 import type { AppProps } from "next/app";
 import { ChakraProvider, Stack, useMediaQuery, VStack } from "@chakra-ui/react";
 
-import Header from "../components/Header";
 import SideNav from "../components/SideNav";
 
 import theme from "../styles/theme";

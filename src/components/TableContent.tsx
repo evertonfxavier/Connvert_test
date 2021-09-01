@@ -3,7 +3,6 @@ import {
   HStack,
   Table as ChakraTable,
   Tbody,
-  Td,
   Th,
   Thead,
   Tr,

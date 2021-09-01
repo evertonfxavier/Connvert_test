@@ -1,5 +1,5 @@
 /* eslint-disable react/no-children-prop */
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   VStack,
   Button,
@@ -11,17 +11,17 @@ import {
   Select,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
+
 import ModalWrapper from "./ModalWrapper";
 
-import { divida } from "../pages/api/divida";
 import { api } from "../pages/api/users";
-import { uuid } from "../pages/api/uuid";
+import { IDebitsInput } from "../pages/[idUsuario]/divida";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit?: any;
-  initialData: any;
+  initialData?: IDebitsInput;
 }
 
 export interface UsersResponse {
@@ -30,8 +30,8 @@ export interface UsersResponse {
 }
 
 export interface SubmitProps {
-  idUsuario: string;
-  valor: string;
+  idUsuario: number;
+  valor: number;
   motivo: string;
 }
 
@@ -123,7 +123,7 @@ const Modal: React.FC<ModalProps> = ({
             }}
             onClick={onClose}
           >
-            Salvar
+            {initialData ? "Atualizar" : "Salvar"}
           </Button>
         </HStack>
       </VStack>
