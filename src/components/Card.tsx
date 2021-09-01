@@ -1,12 +1,18 @@
 import { Box, Divider, HStack, Text } from "@chakra-ui/react";
 
-interface CardProps {
-  user: string;
-  idUsuario: number;
+interface ICard {
+  id: string | undefined;
+  name: string;
+  email: string;
   handleClickCard: () => void;
 }
 
-const Card: React.FC<CardProps> = ({ user, idUsuario, handleClickCard }) => {
+const Card: React.FC<ICard> = ({
+  id,
+  name,
+  email,
+  handleClickCard,
+}) => {
   return (
     <Box
       w={["full", "16rem", "16rem", "16rem"]}
@@ -23,11 +29,12 @@ const Card: React.FC<CardProps> = ({ user, idUsuario, handleClickCard }) => {
       }}
       onClick={handleClickCard}
     >
-      <Text>{user}</Text>
+      <Text color="blue.600">{name}</Text>
+      <Text fontSize="sm">E-mail: {email}</Text>
       <Divider />
       <HStack w="full" justifyContent="space-between" pt=".4rem">
         <Text color="gray.400" fontSize="sm">
-          idUsuario: #{idUsuario}
+          idUsuario: #{id}
         </Text>
         <Text color="green.400" fontSize="sm" fontStyle="italic">
           Ver dívida(s) {">>"}

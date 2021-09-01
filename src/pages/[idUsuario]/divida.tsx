@@ -9,6 +9,7 @@ import { divida } from "../api/divida";
 import { uuid } from "../api/uuid";
 import Modal, { SubmitProps } from "../../components/Modal";
 import { useRouter } from "next/router";
+import { api } from "../api/users";
 
 export interface IDebits {
   _id: number;
@@ -30,7 +31,15 @@ const Divida: React.FC = () => {
 
   const { query } = useRouter();
 
+  const [user, setUser] = useState({ id: query.idUsuario, name: "" });
+
   const convertParamsTnumber = Number(query.idUsuario);
+
+  useEffect(() => {
+    api.get(`users/${query.idUsuario}`).then((resp) => {
+      setUser(resp.data);
+    });
+  }, []);
 
   useEffect(() => {
     divida.get(`divida/${uuid}`).then((resp) => {
@@ -39,13 +48,15 @@ const Divida: React.FC = () => {
       );
       setDebits(filtered);
     });
-  }, []);
+  }, [convertParamsTnumber]);
 
   const handleSubmit = async (data: SubmitProps) => {
+    const formattedData = { ...data, idUsuario: query.idUsuario };
+
     if (editingDebit && editingDebit._id) {
-      await divida.put(`divida/${editingDebit._id}/${uuid}`, data);
+      await divida.put(`divida/${editingDebit._id}/${uuid}`, formattedData);
     } else {
-      await divida.post(`divida/${uuid}`, data);
+      await divida.post(`divida/${uuid}`, formattedData);
     }
 
     divida.get(`divida/${uuid}`).then((resp) => {
@@ -65,6 +76,18 @@ const Divida: React.FC = () => {
   const handleDeleteDebit = async (_id: number) => {
     await divida.delete(`/divida/${_id}/${uuid}`);
 
+    //TODO redirect user quando nao tiver dado
+    // const debts = await divida.get(`divida/${uuid}`);
+    // const users = await api.get("users");
+
+    // const usersWithDebtsId = debts.data.result.map(
+    //   (item: any) => item.idUsuario
+    // );
+
+    // const results = users.data.filter((user: any) =>
+    //   usersWithDebtsId.includes(user.id)
+    // );
+
     setDebits(debits.filter((debit) => debit._id !== _id));
   };
 
@@ -75,9 +98,14 @@ const Divida: React.FC = () => {
 
   return (
     <VStack w="full" px="1rem">
-      <Header onOpen={onOpen} whenThereIsUser />
+      <Header
+        idUsuario={Number(query.idUsuario)}
+        onOpen={onOpen}
+        whenThereIsUser
+        name={user.name}
+      />
 
-      <TableContent>
+      <TableContent handleListUsers={false}>
         {debits.map((debit) => (
           <Table
             key={debit._id}
@@ -93,6 +121,7 @@ const Divida: React.FC = () => {
         onClose={handleCloseModal}
         onSubmit={handleSubmit}
         initialData={editingDebit}
+        hiddeUserSelect
       />
     </VStack>
   );

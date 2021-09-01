@@ -9,15 +9,20 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
+import { IDebits } from "../pages/[idUsuario]/divida";
 
 interface HeaderProps {
+  idUsuario?: any;
   whenThereIsUser: boolean;
   onOpen?: () => void;
+  name?: string;
 }
 
 const Header: React.FC<HeaderProps> = ({
   onOpen,
+  idUsuario,
   whenThereIsUser,
+  name,
   ...rest
 }) => {
   const router = useRouter();
@@ -26,7 +31,7 @@ const Header: React.FC<HeaderProps> = ({
     <HStack
       w="full"
       h="4rem"
-      px="1rem"
+      // px="1rem"
       mt="1rem"
       borderRadius=".4rem"
       justifyContent="space-between"
@@ -42,6 +47,7 @@ const Header: React.FC<HeaderProps> = ({
       </VStack>
 
       <Button
+        w="165px"
         bgColor="blue.400"
         color="white"
         _hover={{
@@ -53,25 +59,20 @@ const Header: React.FC<HeaderProps> = ({
       </Button>
     </HStack>
   ) : (
-    <HStack
+    <VStack
       w="full"
       h="4rem"
       mt="1rem"
       borderRadius=".4rem"
-      justifyContent="space-between"
+      justifyContent="center"
+      mb={8}
       {...rest}
     >
-      <Box>
-        <Box mb={2} cursor="pointer" onClick={() => router.back()}>
-          <Icon as={ArrowBackIcon} />
-          <Text as="span">voltar</Text>
+      <HStack w="full" alignItems="center" justifyContent="space-between">
+        <Box cursor="pointer" onClick={() => router.back()}>
+          <Icon as={ArrowBackIcon} mr="4px" />
+          <Text as="span">Voltar</Text>
         </Box>
-        <Heading fontSize="xl" color="gray.800">
-          Everton Freitas Xavier da Silva
-        </Heading>
-      </Box>
-
-      <HStack>
         <Button
           bgColor="blue.400"
           color="white"
@@ -83,7 +84,12 @@ const Header: React.FC<HeaderProps> = ({
           + Criar dívida
         </Button>
       </HStack>
-    </HStack>
+      <Box w="full">
+        <Heading fontSize="xl" color="gray.800">
+          #{idUsuario} - {name}
+        </Heading>
+      </Box>
+    </VStack>
   );
 };
 

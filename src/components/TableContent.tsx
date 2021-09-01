@@ -9,12 +9,22 @@ import {
 } from "@chakra-ui/react";
 
 interface CardContentProps {
+  handleListUsers: boolean;
   children: ReactNode;
 }
 
-const TableContent: React.FC<CardContentProps> = ({ children }) => {
-  const headerTable = [
-    { name: "idUsuario" },
+const TableContent: React.FC<CardContentProps> = ({
+  handleListUsers,
+  children,
+}) => {
+  const headerUserTable = [
+    { name: "ID" },
+    { name: "Nome" },
+    { name: "email" },
+    { name: "Ações" },
+  ];
+
+  const headerDebitTable = [
     { name: "Valor" },
     { name: "Motivo" },
     { name: "Criado em:" },
@@ -24,7 +34,7 @@ const TableContent: React.FC<CardContentProps> = ({ children }) => {
   return (
     <HStack
       w="full"
-      h={["calc(100vh - 10rem)", "calc(100vh - 10rem)", "calc(100vh - 6.8rem)"]}
+      h={["calc(100vh - 10rem)", "calc(100vh - 10rem)", "calc(100vh - 10rem)"]}
       flexWrap="wrap"
       border="1px solid"
       borderColor="gray.200"
@@ -46,11 +56,19 @@ const TableContent: React.FC<CardContentProps> = ({ children }) => {
     >
       <ChakraTable variant="striped" colorScheme="gray">
         <Thead>
-          <Tr>
-            {headerTable.map((header, idx) => (
-              <Th key={idx}>{header.name}</Th>
-            ))}
-          </Tr>
+          {handleListUsers ? (
+            <Tr>
+              {headerUserTable.map((header, idx) => (
+                <Th key={idx}>{header.name}</Th>
+              ))}
+            </Tr>
+          ) : (
+            <Tr>
+              {headerDebitTable.map((header, idx) => (
+                <Th key={idx}>{header.name}</Th>
+              ))}
+            </Tr>
+          )}
         </Thead>
         <Tbody>{children}</Tbody>
       </ChakraTable>

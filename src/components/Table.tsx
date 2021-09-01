@@ -16,7 +16,6 @@ const Table: React.FC<ITable> = ({
 }) => {
   return (
     <Tr>
-      <Td>{debit.idUsuario}</Td>
       <Td>
         {new Intl.NumberFormat("pt-BR", {
           style: "currency",

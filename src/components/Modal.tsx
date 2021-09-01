@@ -4,11 +4,11 @@ import {
   VStack,
   Button,
   HStack,
-  Box,
   Input,
   InputGroup,
   InputLeftAddon,
   Select,
+  Text,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 
@@ -22,11 +22,13 @@ interface ModalProps {
   onClose: () => void;
   onSubmit?: any;
   initialData?: IDebitsInput;
+  hiddeUserSelect?: boolean;
 }
 
 export interface UsersResponse {
   id: number;
   name: string;
+  email: string;
 }
 
 export interface SubmitProps {
@@ -40,10 +42,13 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   onSubmit,
   initialData,
+  hiddeUserSelect = false,
 }) => {
   const [users, setUsers] = useState<UsersResponse[]>([]);
 
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset, formState: {
+    isSubmitting
+  } } = useForm();
 
   useEffect(() => {
     api.get("users").then((resp) => {
@@ -65,27 +70,49 @@ const Modal: React.FC<ModalProps> = ({
     reset();
     onSubmit(data);
   };
+  // console.log(initialData)
 
   return (
     <ModalWrapper isOpen={isOpen} onClose={handleClose}>
       <VStack as="form" spacing={6} onSubmit={handleSubmit(handleSubmitData)}>
-        <Box w="full" textAlign="right">
-          <label htmlFor="valor">Usuário:</label>
-          <Select
-            placeholder="Selecione um usuário"
-            defaultValue={initialData?.idUsuario || ""}
-            {...register("idUsuario", { required: true })}
-          >
-            {users.map((user) => (
-              <option key={user.id} value={user.id}>
-                {user.id} - {user.name}
-              </option>
-            ))}
-          </Select>
-        </Box>
-        <Box w="full" textAlign="right">
-          <label htmlFor="valor">Valor:</label>
-          <InputGroup>
+        {!hiddeUserSelect && (
+          <>
+            <HStack
+              as="fieldset"
+              w="full"
+              textAlign="right"
+              justifyContent="space-between"
+            >
+              <Text as="label" htmlFor="valor">
+                Usuário:
+              </Text>
+              <InputGroup w="xs">
+                <Select
+                  placeholder="Selecione um usuário"
+                  defaultValue={initialData?.idUsuario || ""}
+                  // disabled={hiddeUserSelect}
+                  {...register("idUsuario", { required: true })}
+                >
+                  {users.map((user) => (
+                    <option key={user.id} value={user.id}>
+                      {user.id} - {user.name}
+                    </option>
+                  ))}
+                </Select>
+              </InputGroup>
+            </HStack>
+          </>
+        )}
+        <HStack
+          as="fieldset"
+          w="full"
+          textAlign="right"
+          justifyContent="space-between"
+        >
+          <Text as="label" htmlFor="valor">
+            Valor:
+          </Text>
+          <InputGroup w="xs">
             <InputLeftAddon children="R$" />
             <Input
               type="number"
@@ -93,15 +120,24 @@ const Modal: React.FC<ModalProps> = ({
               {...register("valor", { required: true })}
             />
           </InputGroup>
-        </Box>
-        <Box w="full" textAlign="right">
-          <label htmlFor="motivo">Motivo:</label>
-          <Input
-            type="text"
-            defaultValue={initialData?.motivo || ""}
-            {...register("motivo", { required: true })}
-          />
-        </Box>
+        </HStack>
+        <HStack
+          as="fieldset"
+          w="full"
+          textAlign="right"
+          justifyContent="space-between"
+        >
+          <Text as="label" htmlFor="motivo">
+            Motivo:
+          </Text>
+          <InputGroup w="xs">
+            <Input
+              type="text"
+              defaultValue={initialData?.motivo || ""}
+              {...register("motivo", { required: true })}
+            />
+          </InputGroup>
+        </HStack>
         <HStack>
           <Button
             bgColor="red.400"
@@ -122,8 +158,9 @@ const Modal: React.FC<ModalProps> = ({
               opacity: "0.8",
             }}
             onClick={onClose}
+            disabled={isSubmitting}
           >
-            {initialData ? "Atualizar" : "Salvar"}
+            {initialData?.idUsuario ? "Atualizar" : "Salvar"}
           </Button>
         </HStack>
       </VStack>
