@@ -28,7 +28,7 @@ const Divida: React.FC = () => {
     api.get(`users/${query.idUsuario}`).then((resp) => {
       setUser(resp.data);
     });
-  }, []);
+  }, [query.idUsuario]);
 
   useEffect(() => {
     setLoading(true);
