@@ -1,36 +1,31 @@
 import { Button, HStack, Icon, Td, Tr, TableProps } from "@chakra-ui/react";
-import { DeleteIcon, ExternalLinkIcon } from "@chakra-ui/icons";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
+
+import { IUser } from "../types/User";
 
 interface ITable extends TableProps {
-  id: string | undefined;
-  name: string;
-  email: string;
-  handleClickCard: () => void;
+  user: IUser;
+  handleClickToGoDebt: () => void;
 }
 
-const TableUsers: React.FC<ITable> = ({
-  id,
-  name,
-  email,
-  handleClickCard,
-}) => {
+const TableUsers: React.FC<ITable> = ({ user, handleClickToGoDebt }) => {
   return (
     <Tr>
-      <Td>#{id}</Td>
-      <Td>{name}</Td>
-      <Td>{email}</Td>
+      <Td>#{user.id}</Td>
+      <Td>{user.name}</Td>
+      <Td>{user.email}</Td>
       <Td>
         <HStack>
           <Button
-            bgColor="blue.400"
-            onClick={handleClickCard}
+            boxSize={10}
+            bgColor="green.400"
+            onClick={handleClickToGoDebt}
             _hover={{
               opacity: "0.8",
             }}
           >
             <Icon as={ExternalLinkIcon} color="white" />
           </Button>
-          
         </HStack>
       </Td>
     </Tr>

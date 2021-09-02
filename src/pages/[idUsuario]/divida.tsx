@@ -1,40 +1,29 @@
 import { useEffect, useState } from "react";
-import { useDisclosure, VStack } from "@chakra-ui/react";
+import { useDisclosure, VStack, toast, useToast } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 
+import Modal from "../../components/Modal";
 import Table from "../../components/Table";
 import Header from "../../components/Header";
-import TableContent from "../../components/TableContent";
+import Container from "../../components/Container";
+import Loading from "../../components/Loading";
 
+import { api } from "../api/users";
 import { divida } from "../api/divida";
 import { uuid } from "../api/uuid";
-import Modal, { SubmitProps } from "../../components/Modal";
-import { useRouter } from "next/router";
-import { api } from "../api/users";
 
-export interface IDebits {
-  _id: number;
-  idUsuario: number;
-  valor: number;
-  motivo: string;
-  criado: string;
-}
-
-export type IDebitsInput = Omit<IDebits, "id">;
+import { DebtSubmit, IDebts, OmitDebtId } from "../../types/Debts";
 
 const Divida: React.FC = () => {
-  const [debits, setDebits] = useState<IDebits[]>([]);
-  const [editingDebit, setEditingDebit] = useState<IDebitsInput | undefined>(
-    {} as IDebitsInput
-  );
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
   const { query } = useRouter();
-
+  const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [user, setUser] = useState({ id: query.idUsuario, name: "" });
-
-  const convertParamsTnumber = Number(query.idUsuario);
-
+  const [loading, setLoading] = useState(false);
+  const [debts, setDebts] = useState<IDebts[]>([]);
+  const [editingDebt, setEditingDebt] = useState<OmitDebtId | undefined>(
+    {} as OmitDebtId
+  );
   useEffect(() => {
     api.get(`users/${query.idUsuario}`).then((resp) => {
       setUser(resp.data);
@@ -42,39 +31,59 @@ const Divida: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     divida.get(`divida/${uuid}`).then((resp) => {
       let filtered = resp.data.result.filter(
-        (debit: IDebits) => debit.idUsuario === convertParamsTnumber
+        (debt: IDebts) => debt.idUsuario === Number(user.id)
       );
-      setDebits(filtered);
+      setDebts(filtered);
+      setLoading(false);
     });
-  }, [convertParamsTnumber]);
+  }, [user.id]);
 
-  const handleSubmit = async (data: SubmitProps) => {
+  const handleSubmit = async (data: DebtSubmit) => {
     const formattedData = { ...data, idUsuario: query.idUsuario };
 
-    if (editingDebit && editingDebit._id) {
-      await divida.put(`divida/${editingDebit._id}/${uuid}`, formattedData);
+    if (editingDebt && editingDebt._id) {
+      await divida
+        .put(`divida/${editingDebt._id}/${uuid}`, formattedData)
+        .then(() => {
+          toast({
+            position: "top-right",
+            title: "Dívida atualizada com sucesso.",
+            status: "success",
+            duration: 4000,
+            isClosable: true,
+          });
+        });
     } else {
       await divida.post(`divida/${uuid}`, formattedData);
     }
 
     divida.get(`divida/${uuid}`).then((resp) => {
       let filtered = resp.data.result.filter(
-        (debit: IDebits) => debit.idUsuario === convertParamsTnumber
+        (debt: IDebts) => debt.idUsuario === Number(user.id)
       );
-      setDebits(filtered);
+      setDebts(filtered);
     });
   };
 
-  const handleOpenModalToUpdateUser = async (data: IDebitsInput) => {
-    setEditingDebit(data);
+  const handleOpenModalToUpdateUser = async (data: OmitDebtId) => {
+    setEditingDebt(data);
 
     onOpen();
   };
 
-  const handleDeleteDebit = async (_id: number) => {
-    await divida.delete(`/divida/${_id}/${uuid}`);
+  const handleDeleteDebt = async (_id: number) => {
+    await divida.delete(`/divida/${_id}/${uuid}`).then(() => {
+      toast({
+        position: "top-right",
+        title: "Dívida deletada com sucesso.",
+        status: "success",
+        duration: 4000,
+        isClosable: true,
+      });
+    });
 
     //TODO redirect user quando nao tiver dado
     // const debts = await divida.get(`divida/${uuid}`);
@@ -88,39 +97,41 @@ const Divida: React.FC = () => {
     //   usersWithDebtsId.includes(user.id)
     // );
 
-    setDebits(debits.filter((debit) => debit._id !== _id));
+    setDebts(debts.filter((debt) => debt._id !== _id));
   };
 
   const handleCloseModal = () => {
-    setEditingDebit(undefined);
+    setEditingDebt(undefined);
     onClose();
   };
 
   return (
     <VStack w="full" px="1rem">
       <Header
-        idUsuario={Number(query.idUsuario)}
+        id={Number(user.id)}
+        name={user.name}
         onOpen={onOpen}
         whenThereIsUser
-        name={user.name}
       />
-
-      <TableContent handleListUsers={false}>
-        {debits.map((debit) => (
-          <Table
-            key={debit._id}
-            debit={debit}
-            handleEditDebit={handleOpenModalToUpdateUser}
-            handleDeleteDebit={handleDeleteDebit}
-          />
-        ))}
-      </TableContent>
-
+      {loading ? (
+        <Loading />
+      ) : (
+        <Container handleListUsers={false}>
+          {debts.map((debt) => (
+            <Table
+              key={debt._id}
+              debt={debt}
+              handleEditDebt={handleOpenModalToUpdateUser}
+              handleDeleteDebt={handleDeleteDebt}
+            />
+          ))}
+        </Container>
+      )}
       <Modal
         isOpen={isOpen}
         onClose={handleCloseModal}
         onSubmit={handleSubmit}
-        initialData={editingDebit}
+        initialData={editingDebt}
         hiddeUserSelect
       />
     </VStack>

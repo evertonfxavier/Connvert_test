@@ -1,4 +1,4 @@
-import React, { ReactElement, FC } from "react";
+import React, { ReactElement } from "react";
 import {
   Button,
   ButtonGroup,
@@ -21,7 +21,7 @@ interface SwitchViewButtonsProps {
   onChange: (value: ViewsType) => void;
 }
 
-const RadioCard: FC<RadioCardProps> = (props) => {
+const RadioCard: React.FC<RadioCardProps> = (props) => {
   const { getInputProps, getCheckboxProps } = useRadio(props);
 
   const input = getInputProps();
@@ -47,7 +47,7 @@ const RadioCard: FC<RadioCardProps> = (props) => {
   );
 };
 
-export const SwitchViewButtons: FC<SwitchViewButtonsProps> = ({
+export const SwitchViewButtons: React.FC<SwitchViewButtonsProps> = ({
   value,
   onChange,
 }) => {

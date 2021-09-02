@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import {
   HStack,
   Input,
@@ -6,48 +7,38 @@ import {
   InputLeftElement,
   useDisclosure,
   useMediaQuery,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
+import { Search2Icon } from "@chakra-ui/icons";
 
 import Header from "../components/Header";
-import Modal, { SubmitProps, UsersResponse } from "../components/Modal";
-
+import Container from "../components/Container";
 import Card from "../components/Card";
-import CardContent from "../components/CardContent";
-import TableContent from "../components/TableContent";
 import TableUsers from "../components/TableUsers";
-
-import { IDebits, IDebitsInput } from "./[idUsuario]/divida";
+import SwitchViewButtons from "../components/SwitchViewButtons";
+import Loading from "../components/Loading";
+import Modal from "../components/Modal";
 
 import { api } from "./api/users";
 import { divida } from "./api/divida";
 import { uuid } from "./api/uuid";
-import SwitchViewButtons from "../components/SwitchViewButtons";
-import { Search2Icon } from "@chakra-ui/icons";
 
-interface HomeProps {
-  debits: Array<IDebits>;
-}
+import { IUser } from "../types/User";
+import { DebtSubmit, IDebts } from "../types/Debts";
 
 export type ViewsType = "card" | "list";
 
-const Home: React.FC<HomeProps> = () => {
+const Home: React.FC = () => {
+  const router = useRouter();
+  const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [viewMode, setViewMode] = useState<ViewsType>("list");
   const [isLargerThan1900] = useMediaQuery("(min-width: 900px)");
 
-  const [editingDebit, setEditingDebit] = useState<IDebitsInput | undefined>(
-    {} as IDebitsInput
-  );
-  const [debits, setDebits] = useState<IDebits[]>([]);
-  const router = useRouter();
-
-  const [users, setUsers] = useState<UsersResponse[]>([]);
-
-  const [loading, setLoading] = useState(false);
-
   const [search, setSearch] = useState("");
+  const [users, setUsers] = useState<IUser[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const loadUsersWithDebts = async () => {
     setLoading(true);
@@ -55,13 +46,13 @@ const Home: React.FC<HomeProps> = () => {
     const users = await api.get("users");
 
     const usersWithDebtsId = debts.data.result.map(
-      (item: any) => item.idUsuario
+      (item: IDebts) => item.idUsuario
     );
 
     const results = users.data.filter((user: any) =>
       usersWithDebtsId.includes(user.id)
     );
-    // console.log(results)
+
     setUsers(results);
     setLoading(false);
   };
@@ -70,16 +61,17 @@ const Home: React.FC<HomeProps> = () => {
     loadUsersWithDebts();
   }, []);
 
-  const handleSubmit = async (data: SubmitProps) => {
-    if (editingDebit && editingDebit._id) {
-      await divida.put(`divida/${editingDebit._id}/${uuid}`, data);
-    } else {
-      await divida.post(`divida/${uuid}`, data);
-    }
-
-    divida.get(`divida/${uuid}`).then((resp) => {
-      setDebits(resp.data.result);
+  const handleSubmit = async (data: DebtSubmit) => {
+    await divida.post(`divida/${uuid}`, data).then(() => {
+      toast({
+        position: "top-right",
+        title: "Dívida criada com sucesso.",
+        status: "success",
+        duration: 4000,
+        isClosable: true,
+      });
     });
+
     loadUsersWithDebts();
   };
 
@@ -91,10 +83,10 @@ const Home: React.FC<HomeProps> = () => {
 
   return (
     <VStack w="full" px="1rem">
-      <Header onOpen={onOpen} whenThereIsUser={false} />
+      <Header onOpen={onOpen} />
 
       <HStack w="full" justifyContent="space-between" pb="8px">
-        <InputGroup>
+        <InputGroup w="xs">
           <InputLeftElement
             pointerEvents="none"
             // eslint-disable-next-line react/no-children-prop
@@ -111,34 +103,31 @@ const Home: React.FC<HomeProps> = () => {
       </HStack>
 
       {viewMode == "card" || !isLargerThan1900 ? (
-        <CardContent>
-          {filteredUsers.map((item) => (
+        <Container handleShowCards>
+          {filteredUsers.map((user) => (
             <Card
-              key={item.id}
-              name={item.name}
-              email={item.email}
-              id={String(item.id)}
-              handleClickCard={() => router.push(`/${item.id}/divida`)}
+              key={user.id}
+              user={user}
+              handleClickToGoDebt={() => router.push(`/${user.id}/divida`)}
             />
           ))}
-        </CardContent>
+        </Container>
       ) : loading ? (
-        <h1>Loading</h1>
+        <Loading />
       ) : (
-        <TableContent handleListUsers>
-          {filteredUsers.length? 
-          filteredUsers.map((item) => (
-            <TableUsers
-              key={item.id}
-              name={item.name}
-              email={item.email}
-              id={String(item.id)}
-              handleClickCard={() => router.push(`/${item.id}/divida`)}
-            />
-          ))
-        : <h1>Usuários não encontrados</h1>}
-        </TableContent>
-        
+        <Container handleListUsers>
+          {filteredUsers.length ? (
+            filteredUsers.map((user) => (
+              <TableUsers
+                key={user.id}
+                user={user}
+                handleClickToGoDebt={() => router.push(`/${user.id}/divida`)}
+              />
+            ))
+          ) : (
+            <h1>Usuários não encontrados</h1>
+          )}
+        </Container>
       )}
 
       <Modal isOpen={isOpen} onClose={onClose} onSubmit={handleSubmit} />

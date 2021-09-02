@@ -9,18 +9,17 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
-import { IDebits } from "../pages/[idUsuario]/divida";
 
 interface HeaderProps {
-  idUsuario?: any;
-  whenThereIsUser: boolean;
-  onOpen?: () => void;
+  id?: number;
   name?: string;
+  whenThereIsUser?: boolean;
+  onOpen?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
   onOpen,
-  idUsuario,
+  id,
   whenThereIsUser,
   name,
   ...rest
@@ -31,7 +30,6 @@ const Header: React.FC<HeaderProps> = ({
     <HStack
       w="full"
       h="4rem"
-      // px="1rem"
       mt="1rem"
       borderRadius=".4rem"
       justifyContent="space-between"
@@ -86,7 +84,7 @@ const Header: React.FC<HeaderProps> = ({
       </HStack>
       <Box w="full">
         <Heading fontSize="xl" color="gray.800">
-          #{idUsuario} - {name}
+          #{id} - {name}
         </Heading>
       </Box>
     </VStack>

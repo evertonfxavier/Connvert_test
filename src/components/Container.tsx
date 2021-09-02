@@ -8,14 +8,16 @@ import {
   Tr,
 } from "@chakra-ui/react";
 
-interface CardContentProps {
-  handleListUsers: boolean;
+interface ContainerProps {
   children: ReactNode;
+  handleListUsers?: boolean;
+  handleShowCards?: boolean;
 }
 
-const TableContent: React.FC<CardContentProps> = ({
-  handleListUsers,
+const Container: React.FC<ContainerProps> = ({
   children,
+  handleListUsers,
+  handleShowCards,
 }) => {
   const headerUserTable = [
     { name: "ID" },
@@ -24,7 +26,7 @@ const TableContent: React.FC<CardContentProps> = ({
     { name: "Ações" },
   ];
 
-  const headerDebitTable = [
+  const headerDebtTable = [
     { name: "Valor" },
     { name: "Motivo" },
     { name: "Criado em:" },
@@ -34,7 +36,7 @@ const TableContent: React.FC<CardContentProps> = ({
   return (
     <HStack
       w="full"
-      h={["calc(100vh - 10rem)", "calc(100vh - 10rem)", "calc(100vh - 10rem)"]}
+      h={["calc(100vh - 14rem)", "calc(100vh - 10rem)", "calc(100vh - 10rem)"]}
       flexWrap="wrap"
       border="1px solid"
       borderColor="gray.200"
@@ -54,26 +56,30 @@ const TableContent: React.FC<CardContentProps> = ({
       }}
       placeContent="flex-start"
     >
-      <ChakraTable variant="striped" colorScheme="gray">
-        <Thead>
-          {handleListUsers ? (
-            <Tr>
-              {headerUserTable.map((header, idx) => (
-                <Th key={idx}>{header.name}</Th>
-              ))}
-            </Tr>
-          ) : (
-            <Tr>
-              {headerDebitTable.map((header, idx) => (
-                <Th key={idx}>{header.name}</Th>
-              ))}
-            </Tr>
-          )}
-        </Thead>
-        <Tbody>{children}</Tbody>
-      </ChakraTable>
+      {!handleShowCards ? (
+        <ChakraTable variant="striped" colorScheme="gray">
+          <Thead>
+            {handleListUsers ? (
+              <Tr>
+                {headerUserTable.map((header, idx) => (
+                  <Th key={idx}>{header.name}</Th>
+                ))}
+              </Tr>
+            ) : (
+              <Tr>
+                {headerDebtTable.map((header, idx) => (
+                  <Th key={idx}>{header.name}</Th>
+                ))}
+              </Tr>
+            )}
+          </Thead>
+          <Tbody>{children}</Tbody>
+        </ChakraTable>
+      ) : (
+        children
+      )}
     </HStack>
   );
 };
 
-export default TableContent;
+export default Container;

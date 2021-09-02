@@ -1,18 +1,18 @@
 import { Button, HStack, Icon, Td, Tr, TableProps } from "@chakra-ui/react";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 
-import { IDebits } from "../pages/[idUsuario]/divida";
+import { IDebts } from "../types/Debts";
 
 interface ITable extends TableProps {
-  debit: IDebits;
-  handleEditDebit: (debit: IDebits) => void;
-  handleDeleteDebit: (_id: number) => {};
+  debt: IDebts;
+  handleEditDebt: (debt: IDebts) => void;
+  handleDeleteDebt: (_id: number) => {};
 }
 
 const Table: React.FC<ITable> = ({
-  debit,
-  handleEditDebit,
-  handleDeleteDebit,
+  debt,
+  handleEditDebt,
+  handleDeleteDebt,
 }) => {
   return (
     <Tr>
@@ -20,15 +20,16 @@ const Table: React.FC<ITable> = ({
         {new Intl.NumberFormat("pt-BR", {
           style: "currency",
           currency: "BRL",
-        }).format(debit.valor)}
+        }).format(debt.valor)}
       </Td>
-      <Td>{debit.motivo}</Td>
-      <Td>{new Date(debit.criado).toLocaleDateString("pt-BR")}</Td>
+      <Td>{debt.motivo}</Td>
+      <Td>{new Date(debt.criado).toLocaleDateString("pt-BR")}</Td>
       <Td>
         <HStack>
           <Button
+            boxSize={10}
             bgColor="blue.400"
-            onClick={() => handleEditDebit(debit)}
+            onClick={() => handleEditDebt(debt)}
             _hover={{
               opacity: "0.8",
             }}
@@ -36,8 +37,9 @@ const Table: React.FC<ITable> = ({
             <Icon as={EditIcon} color="white" />
           </Button>
           <Button
+            boxSize={10}
             bgColor="red.400"
-            onClick={() => handleDeleteDebit(debit._id)}
+            onClick={() => handleDeleteDebt(debt._id)}
             _hover={{
               opacity: "0.8",
             }}

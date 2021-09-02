@@ -1,40 +1,22 @@
 /* eslint-disable react/no-children-prop */
 import { useEffect, useState } from "react";
-import {
-  VStack,
-  Button,
-  HStack,
-  Input,
-  InputGroup,
-  InputLeftAddon,
-  Select,
-  Text,
-} from "@chakra-ui/react";
+import { VStack, Button, HStack, Input, Select, Text } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 
 import ModalWrapper from "./ModalWrapper";
+import InputGroup from "./InputGroup";
 
 import { api } from "../pages/api/users";
-import { IDebitsInput } from "../pages/[idUsuario]/divida";
+
+import { IUser } from "../types/User";
+import { DebtSubmit, OmitDebtId } from "../types/Debts";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit?: any;
-  initialData?: IDebitsInput;
+  initialData?: OmitDebtId;
   hiddeUserSelect?: boolean;
-}
-
-export interface UsersResponse {
-  id: number;
-  name: string;
-  email: string;
-}
-
-export interface SubmitProps {
-  idUsuario: number;
-  valor: number;
-  motivo: string;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -44,19 +26,21 @@ const Modal: React.FC<ModalProps> = ({
   initialData,
   hiddeUserSelect = false,
 }) => {
-  const [users, setUsers] = useState<UsersResponse[]>([]);
+  const [users, setUsers] = useState<IUser[]>([]);
 
-  const { register, handleSubmit, reset, formState: {
-    isSubmitting
-  } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { isSubmitting, errors },
+  } = useForm();
 
   useEffect(() => {
     api.get("users").then((resp) => {
-      const usersData = resp.data.map((user: UsersResponse) => ({
+      const usersData = resp.data.map((user: IUser) => ({
         id: user.id,
         name: user.name,
       }));
-      // console.log("usersData", usersData);
       setUsers(usersData);
     });
   }, []);
@@ -66,78 +50,58 @@ const Modal: React.FC<ModalProps> = ({
     onClose();
   };
 
-  const handleSubmitData = (data: SubmitProps) => {
+  const handleSubmitData = (data: DebtSubmit) => {
     reset();
     onSubmit(data);
+    onClose();
   };
-  // console.log(initialData)
 
   return (
     <ModalWrapper isOpen={isOpen} onClose={handleClose}>
       <VStack as="form" spacing={6} onSubmit={handleSubmit(handleSubmitData)}>
         {!hiddeUserSelect && (
-          <>
-            <HStack
-              as="fieldset"
-              w="full"
-              textAlign="right"
-              justifyContent="space-between"
+          <InputGroup
+            label="Usuário"
+            hasSomeError={errors.idUsuario && "Escolha um usuário"}
+          >
+            <Select
+              placeholder="Selecione um usuário"
+              defaultValue={initialData?.idUsuario || ""}
+              {...register("idUsuario", { required: true })}
             >
-              <Text as="label" htmlFor="valor">
-                Usuário:
-              </Text>
-              <InputGroup w="xs">
-                <Select
-                  placeholder="Selecione um usuário"
-                  defaultValue={initialData?.idUsuario || ""}
-                  // disabled={hiddeUserSelect}
-                  {...register("idUsuario", { required: true })}
-                >
-                  {users.map((user) => (
-                    <option key={user.id} value={user.id}>
-                      {user.id} - {user.name}
-                    </option>
-                  ))}
-                </Select>
-              </InputGroup>
-            </HStack>
-          </>
+              {users.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.id} - {user.name}
+                </option>
+              ))}
+            </Select>
+          </InputGroup>
         )}
-        <HStack
-          as="fieldset"
-          w="full"
-          textAlign="right"
-          justifyContent="space-between"
+
+        <InputGroup
+          label="Valor"
+          hasLeftItem
+          InputLeftItem="R$"
+          hasSomeError={errors.valor && "Defina o valor"}
         >
-          <Text as="label" htmlFor="valor">
-            Valor:
-          </Text>
-          <InputGroup w="xs">
-            <InputLeftAddon children="R$" />
-            <Input
-              type="number"
-              defaultValue={initialData?.valor || ""}
-              {...register("valor", { required: true })}
-            />
-          </InputGroup>
-        </HStack>
-        <HStack
-          as="fieldset"
-          w="full"
-          textAlign="right"
-          justifyContent="space-between"
+          <Input
+            type="number"
+            defaultValue={initialData?.valor || ""}
+            {...register("valor", { required: true })}
+          />
+        </InputGroup>
+
+        <InputGroup
+          label="Motivo"
+          hasSomeError={errors.motivo && "Especifique o motivo"}
         >
-          <Text as="label" htmlFor="motivo">
-            Motivo:
-          </Text>
-          <InputGroup w="xs">
-            <Input
-              type="text"
-              defaultValue={initialData?.motivo || ""}
-              {...register("motivo", { required: true })}
-            />
-          </InputGroup>
-        </HStack>
+          <Input
+            type="text"
+            defaultValue={initialData?.motivo || ""}
+            {...register("motivo", { required: true })}
+          />
+        </InputGroup>
+
         <HStack>
           <Button
             bgColor="red.400"
@@ -153,11 +117,10 @@ const Modal: React.FC<ModalProps> = ({
           <Button
             type="submit"
             color="white"
-            bgColor="blue.400"
+            bgColor="green.400"
             _hover={{
               opacity: "0.8",
             }}
-            onClick={onClose}
             disabled={isSubmitting}
           >
             {initialData?.idUsuario ? "Atualizar" : "Salvar"}
