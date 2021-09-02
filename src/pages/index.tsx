@@ -105,26 +105,41 @@ const Home: React.FC = () => {
 
       {viewMode == "card" || !isLargerThan1900 ? (
         <Container handleShowCards>
-          {filteredUsers.map((user) => (
-            <Card
-              key={user.id}
-              user={user}
-              handleClickToGoDebt={() => router.push(`/${user.id}/divida`)}
-            />
-          ))}
-        </Container>
-      ) : loading ? (
-        <Loading />
-      ) : (
-        <Container handleListUsers>
           {filteredUsers.length ? (
             filteredUsers.map((user) => (
-              <TableUsers
+              <Card
                 key={user.id}
                 user={user}
                 handleClickToGoDebt={() => router.push(`/${user.id}/divida`)}
               />
             ))
+          ) : (
+            <VStack
+              w="full"
+              h={["calc(100vh - 16rem)"]}
+              justifyContent="center"
+              textAlign="center"
+            >
+              <Heading size="md">
+                Opss, nenhum usuário encontrado com esse nome
+              </Heading>
+            </VStack>
+          )}
+        </Container>
+      ) : loading ? (
+        <Loading />
+      ) : (
+        <>
+          {filteredUsers.length ? (
+            <Container handleListUsers>
+              {filteredUsers.map((user) => (
+                <TableUsers
+                  key={user.id}
+                  user={user}
+                  handleClickToGoDebt={() => router.push(`/${user.id}/divida`)}
+                />
+              ))}
+            </Container>
           ) : (
             <VStack
               w="full"
@@ -136,7 +151,7 @@ const Home: React.FC = () => {
               </Heading>
             </VStack>
           )}
-        </Container>
+        </>
       )}
 
       <Modal isOpen={isOpen} onClose={onClose} onSubmit={handleSubmit} />
