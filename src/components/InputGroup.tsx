@@ -32,14 +32,28 @@ const InputGroup: React.FC<IInputGroup> = ({
         w="full"
         textAlign="right"
         justifyContent="space-between"
+        flexDirection={["column", "row", "row", "row"]}
       >
-        <Text as="label">{label}:</Text>
-        <ChakraInputGroup w="xs" {...rest}>
+        <Text
+          as="label"
+          marginRight={["auto", "unset", "unset", "unset"]}
+          pl={["5px", "0", "0", "0"]}
+        >
+          {label}:
+        </Text>
+        <ChakraInputGroup w={["full", "xs", "xs", "xs"]} {...rest}>
           {hasLeftItem && <InputLeftAddon children={InputLeftItem} />}
           {children}
         </ChakraInputGroup>
       </HStack>
-      <Text paddingLeft="5rem" fontSize="sm" color="red.600">
+      <Text
+        paddingLeft={["5px", "5rem", "5rem", "5rem"]}
+        fontSize="sm"
+        color="red.600"
+        style={{
+          marginTop: 0,
+        }}
+      >
         {hasSomeError}
       </Text>
     </VStack>

@@ -45,7 +45,7 @@ const Header: React.FC<HeaderProps> = ({
       </VStack>
 
       <Button
-        w="165px"
+        w={["7.6rem", "8.6rem", "10.60rem", "10.60rem"]}
         bgColor="blue.400"
         color="white"
         _hover={{
@@ -59,11 +59,11 @@ const Header: React.FC<HeaderProps> = ({
   ) : (
     <VStack
       w="full"
-      h="4rem"
+      // h="4rem"
       mt="1rem"
       borderRadius=".4rem"
       justifyContent="center"
-      mb={8}
+      mb={5}
       {...rest}
     >
       <HStack w="full" alignItems="center" justifyContent="space-between">
@@ -82,7 +82,7 @@ const Header: React.FC<HeaderProps> = ({
           + Criar dívida
         </Button>
       </HStack>
-      <Box w="full">
+      <Box w="full" pt="10px">
         <Heading fontSize="xl" color="gray.800">
           #{id} - {name}
         </Heading>

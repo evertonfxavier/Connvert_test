@@ -23,7 +23,7 @@ const ModalWrapper: React.FC<ModalWrapperProps> = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent mt="8rem" pt="1.2rem">
+      <ModalContent mt="8rem" pt="1.2rem" mx="1.2rem">
         <ModalCloseButton />
         <ModalBody py="2rem">{children}</ModalBody>
       </ModalContent>

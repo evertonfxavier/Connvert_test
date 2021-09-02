@@ -36,7 +36,7 @@ const Container: React.FC<ContainerProps> = ({
   return (
     <HStack
       w="full"
-      h={["calc(100vh - 14rem)", "calc(100vh - 10rem)", "calc(100vh - 10rem)"]}
+      h={["calc(100vh - 12rem)", "calc(100vh - 13rem)", "calc(100vh - 9.2rem)"]}
       flexWrap="wrap"
       border="1px solid"
       borderColor="gray.200"
