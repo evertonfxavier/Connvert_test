@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDisclosure, VStack, toast, useToast } from "@chakra-ui/react";
+import { useDisclosure, VStack, useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 
 import Modal from "../../components/Modal";
@@ -16,6 +16,8 @@ import { DebtSubmit, IDebts, OmitDebtId } from "../../types/Debts";
 
 const Divida: React.FC = () => {
   const { query } = useRouter();
+  const router = useRouter();
+  
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [user, setUser] = useState({ id: query.idUsuario, name: "" });
@@ -93,18 +95,9 @@ const Divida: React.FC = () => {
       });
     });
 
-    //TODO redirect user quando nao tiver dado
-    // const debts = await divida.get(`divida/${uuid}`);
-    // const users = await api.get("users");
-
-    // const usersWithDebtsId = debts.data.result.map(
-    //   (item: any) => item.idUsuario
-    // );
-
-    // const results = users.data.filter((user: any) =>
-    //   usersWithDebtsId.includes(user.id)
-    // );
-
+    if (debts.length === 1) {
+      router.back();
+    }
     setDebts(debts.filter((debt) => debt._id !== _id));
   };
 
