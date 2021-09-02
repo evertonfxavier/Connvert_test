@@ -12,7 +12,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
       <Head>
-        <title> Lisa IT - Test</title>
+        <title> Connvert - Test</title>
       </Head>
       <Stack
         direction={["column", "column", "row", "row"]}

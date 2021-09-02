@@ -27,6 +27,7 @@ import { uuid } from "./api/uuid";
 
 import { IUser } from "../types/User";
 import { DebtSubmit, IDebts } from "../types/Debts";
+import { GetStaticProps } from "next";
 
 export type ViewsType = "card" | "list";
 
@@ -160,3 +161,28 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+
+// export const getStaticProps: GetStaticProps = async () => {
+
+//   const debts = await divida.get(`divida/${uuid}`), {
+//     expand: [""],
+//   });
+
+//   const product = {
+//     priceId: price.id,
+//     // amount: Number(price.unit_amount) / 100,
+//     amount: new Intl.NumberFormat("en-US", {
+//       style: "currency",
+//       currency: "USD",
+//     }).format(Number(price.unit_amount) / 100),
+//   };
+
+//   return {
+//     props: {
+//       product,
+//     },
+//     //quanto tempo em seg eu quero que essa página se mantenha sem previsar ser revalidada/construída.
+//     revalidate: 60 * 60 * 24, //24h
+
+//   };
+// };
