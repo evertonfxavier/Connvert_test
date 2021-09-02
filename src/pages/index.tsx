@@ -72,9 +72,11 @@ const Home: React.FC = () => {
         isClosable: true,
       });
     });
-
+    
     loadUsersWithDebts();
+    console.log(data)
   };
+
 
   const lowerSearch = search.toLocaleLowerCase();
 

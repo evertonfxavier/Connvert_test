@@ -1,6 +1,6 @@
 /* eslint-disable react/no-children-prop */
 import { useEffect, useState } from "react";
-import { VStack, Button, HStack, Input, Select, Text } from "@chakra-ui/react";
+import { VStack, Button, HStack, Input, Select } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 
 import ModalWrapper from "./ModalWrapper";
@@ -80,12 +80,10 @@ const Modal: React.FC<ModalProps> = ({
 
         <InputGroup
           label="Valor"
-          hasLeftItem
-          InputLeftItem="R$"
           hasSomeError={errors.valor && "Defina o valor"}
         >
           <Input
-            type="number"
+            type="text"
             defaultValue={initialData?.valor || ""}
             {...register("valor", { required: true })}
           />

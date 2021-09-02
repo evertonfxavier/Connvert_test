@@ -59,7 +59,6 @@ const Header: React.FC<HeaderProps> = ({
   ) : (
     <VStack
       w="full"
-      // h="4rem"
       mt="1rem"
       borderRadius=".4rem"
       justifyContent="center"
