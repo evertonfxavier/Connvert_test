@@ -1,5 +1,3 @@
-# Teste Técnico: Busca Plantão (Front-End)
-
 ## Preview
 
 <h1 align="center">
