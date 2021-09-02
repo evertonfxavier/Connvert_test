@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import {
+  Heading,
   HStack,
   Input,
   InputGroup,
@@ -125,7 +126,15 @@ const Home: React.FC = () => {
               />
             ))
           ) : (
-            <h1>Usuários não encontrados</h1>
+            <VStack
+              w="full"
+              h={["calc(100vh - 16rem)"]}
+              justifyContent="center"
+            >
+              <Heading size="md">
+                Opss, nenhum usuário encontrado com esse nome
+              </Heading>
+            </VStack>
           )}
         </Container>
       )}
