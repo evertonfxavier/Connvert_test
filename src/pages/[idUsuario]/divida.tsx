@@ -57,7 +57,15 @@ const Divida: React.FC = () => {
           });
         });
     } else {
-      await divida.post(`divida/${uuid}`, formattedData);
+      await divida.post(`divida/${uuid}`, formattedData).then(() => {
+        toast({
+          position: "top-right",
+          title: "Dívida criada com sucesso.",
+          status: "success",
+          duration: 4000,
+          isClosable: true,
+        });
+      });
     }
 
     divida.get(`divida/${uuid}`).then((resp) => {
