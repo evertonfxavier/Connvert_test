@@ -23,7 +23,6 @@ import Modal from "../components/Modal";
 
 import { api } from "./api/users";
 import { divida } from "./api/divida";
-import { uuid } from "./api/uuid";
 
 import { IUser } from "../types/User";
 import { DebtSubmit, IDebts } from "../types/Debts";
@@ -43,16 +42,18 @@ const Home: React.FC = () => {
 
   const loadUsersWithDebts = async () => {
     setLoading(true);
-    const debts = await divida.get(`divida/${uuid}`);
+    const debts = await divida.get(`divida`);
     const users = await api.get("users");
 
-    const usersWithDebtsId = debts.data.result.map(
-      (item: IDebts) => item.idUsuario
-    );
+    const usersWithDebtsId = debts.data.map((item: IDebts) => Number(item.idUsuario));
 
     const results = users.data.filter((user: any) =>
-      usersWithDebtsId.includes(user.id)
+      usersWithDebtsId.includes(Number(user.id))
     );
+
+    // console.log({ usersWithDebtsId });
+    // console.log({ users });
+    // console.log({ results });
 
     setUsers(results);
     setLoading(false);
@@ -63,7 +64,7 @@ const Home: React.FC = () => {
   }, []);
 
   const handleSubmit = async (data: DebtSubmit) => {
-    await divida.post(`divida/${uuid}`, data).then(() => {
+    await divida.post(`divida`, data).then(() => {
       toast({
         position: "top-right",
         title: "Dívida criada com sucesso.",
@@ -72,17 +73,18 @@ const Home: React.FC = () => {
         isClosable: true,
       });
     });
-    
-    loadUsersWithDebts();
-    console.log(data)
-  };
 
+    loadUsersWithDebts();
+    // console.log(data)
+  };
 
   const lowerSearch = search.toLocaleLowerCase();
 
   const filteredUsers = users.filter((user) =>
     user.name.toLocaleLowerCase().includes(lowerSearch)
   );
+
+  // console.log({ filteredUsers });
 
   return (
     <VStack w="full" px="1rem">
@@ -107,8 +109,8 @@ const Home: React.FC = () => {
 
       {viewMode == "card" || !isLargerThan1900 ? (
         <Container handleShowCards>
-          {filteredUsers.length ? (
-            filteredUsers.map((user) => (
+          {users.length ? (
+            users.map((user) => (
               <Card
                 key={user.id}
                 user={user}
@@ -130,9 +132,9 @@ const Home: React.FC = () => {
         <Loading />
       ) : (
         <>
-          {filteredUsers.length ? (
+          {users.length ? (
             <Container handleListUsers>
-              {filteredUsers.map((user) => (
+              {users.map((user) => (
                 <TableUsers
                   key={user.id}
                   user={user}

@@ -66,7 +66,7 @@ const Modal: React.FC<ModalProps> = ({
           >
             <Select
               placeholder="Selecione um usuário"
-              defaultValue={initialData?.idUsuario || ""}
+              defaultValue={initialData?.idUsuario}
               {...register("idUsuario", { required: true })}
             >
               {users.map((user) => (

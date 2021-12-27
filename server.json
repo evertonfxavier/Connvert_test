@@ -1,0 +1,34 @@
+{
+  "divida": [
+    {
+      "idUsuario": 1,
+      "valor": 350000,
+      "motivo": "dasdasd",
+      "id": 1
+    },
+    {
+      "idUsuario": 2,
+      "valor": "21",
+      "motivo": "vai",
+      "id": 2
+    },
+    {
+      "idUsuario": "1",
+      "valor": "212",
+      "motivo": "pastel",
+      "id": 5
+    },
+    {
+      "idUsuario": "3",
+      "valor": "212",
+      "motivo": "dasdasd",
+      "id": 6
+    },
+    {
+      "idUsuario": "4",
+      "valor": "R$0,21",
+      "motivo": "vai",
+      "id": 7
+    }
+  ]
+}

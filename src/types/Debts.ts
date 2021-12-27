@@ -1,6 +1,6 @@
 export interface IDebts {
   _id: number;
-  idUsuario: number;
+  idUsuario: string | number;
   valor: number;
   motivo: string;
   criado: string;

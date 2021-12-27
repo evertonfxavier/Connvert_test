@@ -10,7 +10,6 @@ import Loading from "../../components/Loading";
 
 import { api } from "../api/users";
 import { divida } from "../api/divida";
-import { uuid } from "../api/uuid";
 
 import { DebtSubmit, IDebts, OmitDebtId } from "../../types/Debts";
 
@@ -34,9 +33,9 @@ const Divida: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    divida.get(`divida/${uuid}`).then((resp) => {
-      let filtered = resp.data.result.filter(
-        (debt: IDebts) => debt.idUsuario === Number(user.id)
+    divida.get(`divida`).then((resp) => {
+      let filtered = resp.data.filter(
+        (debt: IDebts) => Number(debt.idUsuario) === Number(user.id)
       );
       setDebts(filtered);
       setLoading(false);
@@ -48,7 +47,7 @@ const Divida: React.FC = () => {
 
     if (editingDebt && editingDebt._id) {
       await divida
-        .put(`divida/${editingDebt._id}/${uuid}`, formattedData)
+        .put(`divida/${editingDebt._id}`, formattedData)
         .then(() => {
           toast({
             position: "top-right",
@@ -59,7 +58,7 @@ const Divida: React.FC = () => {
           });
         });
     } else {
-      await divida.post(`divida/${uuid}`, formattedData).then(() => {
+      await divida.post(`divida`, formattedData).then(() => {
         toast({
           position: "top-right",
           title: "Dívida criada com sucesso.",
@@ -70,9 +69,9 @@ const Divida: React.FC = () => {
       });
     }
 
-    divida.get(`divida/${uuid}`).then((resp) => {
+    divida.get(`divida`).then((resp) => {
       let filtered = resp.data.result.filter(
-        (debt: IDebts) => debt.idUsuario === Number(user.id)
+        (debt: IDebts) => Number(debt.idUsuario) === Number(user.id)
       );
       setDebts(filtered);
     });
@@ -85,7 +84,7 @@ const Divida: React.FC = () => {
   };
 
   const handleDeleteDebt = async (_id: number) => {
-    await divida.delete(`/divida/${_id}/${uuid}`).then(() => {
+    await divida.delete(`/divida/${_id}`).then(() => {
       toast({
         position: "top-right",
         title: "Dívida deletada com sucesso.",
