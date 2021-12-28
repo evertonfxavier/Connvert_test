@@ -29,7 +29,7 @@ const Container: React.FC<ContainerProps> = ({
   const headerDebtTable = [
     { name: "Valor" },
     { name: "Motivo" },
-    { name: "Criado em:" },
+    { name: "Criado/Atualizado:" },
     { name: "Ações" },
   ];
 

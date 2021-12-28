@@ -6,7 +6,7 @@ import { IDebts } from "../types/Debts";
 interface ITable extends TableProps {
   debt: IDebts;
   handleEditDebt: (debt: IDebts) => void;
-  handleDeleteDebt: (_id: number) => {};
+  handleDeleteDebt: (id: number) => {};
 }
 
 const Table: React.FC<ITable> = ({
@@ -39,7 +39,7 @@ const Table: React.FC<ITable> = ({
           <Button
             boxSize={10}
             bgColor="red.400"
-            onClick={() => handleDeleteDebt(debt._id)}
+            onClick={() => handleDeleteDebt(debt.id)}
             _hover={{
               opacity: "0.8",
             }}

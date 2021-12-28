@@ -1,34 +1,39 @@
 {
   "divida": [
     {
-      "idUsuario": 1,
-      "valor": 350000,
-      "motivo": "dasdasd",
+      "valor": "21",
+      "motivo": "carne",
+      "idUsuario": "1",
+      "criado": "2021-12-28T13:46:28.657Z",
       "id": 1
     },
     {
-      "idUsuario": 2,
-      "valor": "21",
-      "motivo": "vai",
-      "id": 2
-    },
-    {
-      "idUsuario": "1",
-      "valor": "212",
+      "idUsuario": "2",
+      "valor": "2",
       "motivo": "pastel",
+      "criado": "2021-12-28T13:40:03.386Z",
       "id": 5
     },
     {
-      "idUsuario": "3",
-      "valor": "212",
-      "motivo": "dasdasd",
+      "valor": "3",
+      "motivo": "agua",
+      "idUsuario": "2",
+      "criado": "2021-12-28T13:46:18.007Z",
       "id": 6
     },
     {
-      "idUsuario": "4",
-      "valor": "R$0,21",
-      "motivo": "vai",
+      "valor": "3",
+      "motivo": "peixe fresco",
+      "idUsuario": "3",
+      "criado": "2021-12-28T13:58:16.704Z",
       "id": 7
+    },
+    {
+      "valor": "21",
+      "motivo": "dasdasd",
+      "idUsuario": "3",
+      "criado": "2021-12-28T14:08:23.476Z",
+      "id": 8
     }
   ]
 }

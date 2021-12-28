@@ -1,5 +1,5 @@
 export interface IDebts {
-  _id: number;
+  id: number;
   idUsuario: string | number;
   valor: number;
   motivo: string;

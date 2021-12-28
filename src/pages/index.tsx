@@ -25,7 +25,7 @@ import { api } from "./api/users";
 import { divida } from "./api/divida";
 
 import { IUser } from "../types/User";
-import { DebtSubmit, IDebts } from "../types/Debts";
+import { IDebts, OmitDebtId } from "../types/Debts";
 
 export type ViewsType = "card" | "list";
 
@@ -42,18 +42,16 @@ const Home: React.FC = () => {
 
   const loadUsersWithDebts = async () => {
     setLoading(true);
-    const debts = await divida.get(`divida`);
+    const debts = await divida.get("divida");
     const users = await api.get("users");
 
-    const usersWithDebtsId = debts.data.map((item: IDebts) => Number(item.idUsuario));
+    const usersWithDebtsId = debts.data.map((item: IDebts) =>
+      Number(item.idUsuario)
+    );
 
     const results = users.data.filter((user: any) =>
       usersWithDebtsId.includes(Number(user.id))
     );
-
-    // console.log({ usersWithDebtsId });
-    // console.log({ users });
-    // console.log({ results });
 
     setUsers(results);
     setLoading(false);
@@ -63,19 +61,26 @@ const Home: React.FC = () => {
     loadUsersWithDebts();
   }, []);
 
-  const handleSubmit = async (data: DebtSubmit) => {
-    await divida.post(`divida`, data).then(() => {
+  const handleSubmit = async (data: IDebts) => {
+    const formattedData = {
+      id: data.id,
+      idUsuario: data.idUsuario,
+      valor: data.valor,
+      motivo: data.motivo,
+      criado: new Date(),
+    };
+
+    await divida.post("divida", formattedData).then(() => {
       toast({
         position: "top-right",
         title: "Dívida criada com sucesso.",
         status: "success",
-        duration: 4000,
+        duration: 2000,
         isClosable: true,
       });
     });
 
     loadUsersWithDebts();
-    // console.log(data)
   };
 
   const lowerSearch = search.toLocaleLowerCase();
@@ -83,8 +88,6 @@ const Home: React.FC = () => {
   const filteredUsers = users.filter((user) =>
     user.name.toLocaleLowerCase().includes(lowerSearch)
   );
-
-  // console.log({ filteredUsers });
 
   return (
     <VStack w="full" px="1rem">
@@ -109,8 +112,8 @@ const Home: React.FC = () => {
 
       {viewMode == "card" || !isLargerThan1900 ? (
         <Container handleShowCards>
-          {users.length ? (
-            users.map((user) => (
+          {filteredUsers.length ? (
+            filteredUsers.map((user) => (
               <Card
                 key={user.id}
                 user={user}
@@ -132,9 +135,9 @@ const Home: React.FC = () => {
         <Loading />
       ) : (
         <>
-          {users.length ? (
+          {filteredUsers.length ? (
             <Container handleListUsers>
-              {users.map((user) => (
+              {filteredUsers.map((user) => (
                 <TableUsers
                   key={user.id}
                   user={user}

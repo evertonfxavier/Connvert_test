@@ -1,5 +1,6 @@
+/* eslint-disable react/display-name */
 import { useEffect, useState } from "react";
-import { useDisclosure, VStack, useToast } from "@chakra-ui/react";
+import { useDisclosure, VStack, useToast, Box } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 
 import Modal from "../../components/Modal";
@@ -16,15 +17,17 @@ import { DebtSubmit, IDebts, OmitDebtId } from "../../types/Debts";
 const Divida: React.FC = () => {
   const { query } = useRouter();
   const router = useRouter();
-  
+
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [user, setUser] = useState({ id: query.idUsuario, name: "" });
   const [loading, setLoading] = useState(false);
   const [debts, setDebts] = useState<IDebts[]>([]);
-  const [editingDebt, setEditingDebt] = useState<OmitDebtId | undefined>(
-    {} as OmitDebtId
+  const [editingDebt, setEditingDebt] = useState<IDebts | undefined>(
+    {} as IDebts
   );
+
   useEffect(() => {
     api.get(`users/${query.idUsuario}`).then((resp) => {
       setUser(resp.data);
@@ -33,7 +36,8 @@ const Divida: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    divida.get(`divida`).then((resp) => {
+
+    divida.get("divida").then((resp) => {
       let filtered = resp.data.filter(
         (debt: IDebts) => Number(debt.idUsuario) === Number(user.id)
       );
@@ -43,67 +47,84 @@ const Divida: React.FC = () => {
   }, [user.id]);
 
   const handleSubmit = async (data: DebtSubmit) => {
-    const formattedData = { ...data, idUsuario: query.idUsuario };
+    const formattedData = {
+      ...data,
+      // id: data._id,
+      idUsuario: query.idUsuario,
+      valor: data.valor,
+      motivo: data.motivo,
+      criado: new Date(),
+    };
 
-    if (editingDebt && editingDebt._id) {
-      await divida
-        .put(`divida/${editingDebt._id}`, formattedData)
-        .then(() => {
-          toast({
-            position: "top-right",
-            title: "Dívida atualizada com sucesso.",
-            status: "success",
-            duration: 4000,
-            isClosable: true,
-          });
+    if (editingDebt && editingDebt.id) {
+      await divida.put(`divida/${editingDebt.id}`, formattedData).then(() => {
+        toast({
+          position: "top-right",
+          title: "Dívida atualizada com sucesso.",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+          render: () => messageCard(),
         });
+      });
     } else {
-      await divida.post(`divida`, formattedData).then(() => {
+      await divida.post("divida", formattedData).then(() => {
         toast({
           position: "top-right",
           title: "Dívida criada com sucesso.",
           status: "success",
-          duration: 4000,
+          duration: 2000,
           isClosable: true,
+          render: () => messageCard(),
         });
       });
     }
 
-    divida.get(`divida`).then((resp) => {
-      let filtered = resp.data.result.filter(
+    divida.get("divida").then((resp) => {
+      let filtered = resp.data.filter(
         (debt: IDebts) => Number(debt.idUsuario) === Number(user.id)
       );
       setDebts(filtered);
     });
   };
 
-  const handleOpenModalToUpdateUser = async (data: OmitDebtId) => {
+  const handleOpenModalToUpdateUser = async (data: IDebts) => {
     setEditingDebt(data);
 
     onOpen();
   };
 
-  const handleDeleteDebt = async (_id: number) => {
-    await divida.delete(`/divida/${_id}`).then(() => {
+  const handleDeleteDebt = async (id: number) => {
+    await divida.delete(`/divida/${id}`).then(() => {
       toast({
         position: "top-right",
-        title: "Dívida deletada com sucesso.",
         status: "success",
-        duration: 4000,
+        duration: 2000,
         isClosable: true,
+        render: () => messageCard(id),
       });
     });
 
     if (debts.length === 1) {
       router.back();
     }
-    setDebts(debts.filter((debt) => debt._id !== _id));
+    setDebts(debts.filter((debt) => debt.id !== id));
   };
 
   const handleCloseModal = () => {
     setEditingDebt(undefined);
     onClose();
   };
+
+  const messageCard = (id?: number) => (
+    <Box color="white" p={2} m={2} bg={id ? "red.500" : "green.500"}>
+      {id
+        ? "Dívida deletada com sucesso"
+        : editingDebt
+        ? "Dívida atualizada com sucesso."
+        : "Dívida criada com sucesso."}
+    </Box>
+  );
 
   return (
     <VStack w="full" px="1rem">
@@ -119,7 +140,7 @@ const Divida: React.FC = () => {
         <Container handleListUsers={false}>
           {debts.map((debt) => (
             <Table
-              key={debt._id}
+              key={debt.id}
               debt={debt}
               handleEditDebt={handleOpenModalToUpdateUser}
               handleDeleteDebt={handleDeleteDebt}
