@@ -30,6 +30,7 @@ Front-end:
 - [Axios](https://github.com/axios/axios);
 - [React-Hook-Form](https://github.com/axios/axios);
 - [React-icons](https://react-icons.github.io/react-icons/);
+- JSON Server.
 
 ## 🚀 Getting started
 
@@ -46,4 +47,7 @@ $ npm install or yarn
 
 # Start the project
 $ yarn dev or npm run dev
+
+# Start the server
+$ yarn server or npm run server
 ```
